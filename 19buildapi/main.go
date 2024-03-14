@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -16,6 +17,7 @@ type Course struct {
 	CourseID string `json:"courseID"`
 	CourseName string `json:"courseName"`
 	CoursePrice float64 `json:"coursePrice"`
+	// CoursePrice float64 `json:"-"`
 	Student *Student `json:"student"`
 }
 
@@ -36,6 +38,28 @@ func (c *Course) IsEmpty() bool {
 
 func main() {
 	fmt.Println("Welcome to build RESTful API with Golang!")
+
+	// init router
+	r := mux.NewRouter()
+	
+	// seeding
+	courses = append(courses, Course{CourseID: "1", CourseName: "Golang", CoursePrice: 100.00, Student: &Student{FullName: "Abhi Singh", Email: "Abhi@gmail.com"}})
+	courses = append(courses, Course{CourseID: "2", CourseName: "Js", CoursePrice: 199.00, Student: &Student{FullName: "Abhi Singh", Email: "Abhi@gmail.com"}})
+	courses = append(courses, Course{CourseID: "3", CourseName: "DB", CoursePrice: 199.00, Student: &Student{FullName: "Abhi Singh", Email: "Abhi@gmail.com"}})
+
+	// routing
+	r.HandleFunc("/", serveHome).Methods("GET")
+	r.HandleFunc("/courses", getAllCourses).Methods("GET")
+	r.HandleFunc("/course/{id}", getOneCourse).Methods("GET")
+
+	r.HandleFunc("/course", createCourse).Methods("POST")
+
+	r.HandleFunc("/course/{id}", updateCourse).Methods("PUT")
+
+	r.HandleFunc("/course/{id}", deleteCourse).Methods("DELETE")
+
+	// listen to a port
+	log.Fatal(http.ListenAndServe(":4000", r))
 }
 
 // Controllers - file
@@ -143,5 +167,5 @@ func deleteCourse(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	json.NewEncoder(w).Encode("Course not found with the id")
-	return	
+	return
 }
