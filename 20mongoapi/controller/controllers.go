@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/abhishekkushwahaa/mongoapi/model"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -135,4 +136,23 @@ func GetMyAllMovies(w http.ResponseWriter, r *http.Request)  {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	allmovies := getAllMovies()
 	json.NewEncoder(w).Encode(allmovies)
+}
+
+func CreateMovie(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "POST")
+
+	var movie model.Netflix
+	_ = json.NewDecoder(r.Body).Decode(&movie)
+	insertOneMovie(movie)
+	json.NewEncoder(w).Encode(movie)
+}
+
+func MarkAsWatched(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "PUT")
+
+	params := mux.Vars(r)
+	updateOneMovie(params["id"])
+	json.NewEncoder(w).Encode(params["id"])
 }
