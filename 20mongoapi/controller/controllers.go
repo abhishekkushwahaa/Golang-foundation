@@ -8,6 +8,8 @@ import (
 
 	"github.com/abhishekkushwahaa/mongoapi/model"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -55,4 +57,20 @@ func insertOneMovie(movie model.Netflix){
 		log.Fatal("Error inserting movie:", err)
 	}
 	fmt.Println("Inserted movie with ID:", inserted.InsertedID)
+}
+
+// UpdateOne helper function to update one document in MongoDB
+
+func updateOneMovie(movieId string){
+	id, _ := primitive.ObjectIDFromHex(movieId)
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"title": "The Matrix Reloaded"}}
+
+	result, err := collection.UpdateOne(context.Background(), filter, update)
+
+	if err != nil {
+		log.Fatal("Error updating movie:", err)
+	}
+
+	fmt.Println("Modified count:", result.ModifiedCount)
 }
