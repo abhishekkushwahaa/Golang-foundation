@@ -1,4 +1,4 @@
-package main
+package controller
 
 import (
 	"context"
@@ -109,7 +109,7 @@ func deleteAllMovies() int64 {
 
 // Get All Movies helper function to retrieve all documents from MongoDB
 
-func getAllMovies() []primitive.M {
+func GetAllMovies() []primitive.M {
 	cur, err := collection.Find(context.Background(), bson.D{})
 	if err != nil {
 		log.Fatal("Error finding movies:", err)
@@ -134,7 +134,7 @@ func getAllMovies() []primitive.M {
 
 func GetMyAllMovies(w http.ResponseWriter, r *http.Request)  {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
-	allmovies := getAllMovies()
+	allmovies := GetAllMovies()
 	json.NewEncoder(w).Encode(allmovies)
 }
 
