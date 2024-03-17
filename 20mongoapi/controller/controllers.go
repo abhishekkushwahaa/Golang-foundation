@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/abhishekkushwahaa/mongoapi/model"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -41,5 +42,17 @@ func main() {
 	// Initialize collection handle
 	collection = client.Database(dbName).Collection(colName)
 
-	// Additional code for further operations can be added here
+}
+
+// MongoDB Helper Functions
+
+// InsertOne helper function to insert one document into MongoDB
+
+func insertOneMovie(movie model.Netflix){
+	inserted, err := collection.InsertOne(context.Background(), movie)
+
+	if err != nil {
+		log.Fatal("Error inserting movie:", err)
+	}
+	fmt.Println("Inserted movie with ID:", inserted.InsertedID)
 }
