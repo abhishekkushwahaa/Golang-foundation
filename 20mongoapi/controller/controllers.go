@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/abhishekkushwahaa/mongoapi/model"
@@ -102,4 +104,35 @@ func deleteAllMovies() int64 {
 
 	fmt.Println("Number of movie deleted:", result.DeletedCount)
 	return result.DeletedCount
+}
+
+// Get All Movies helper function to retrieve all documents from MongoDB
+
+func getAllMovies() []primitive.M {
+	cur, err := collection.Find(context.Background(), bson.D{})
+	if err != nil {
+		log.Fatal("Error finding movies:", err)
+	}
+
+	var movies []primitive.M
+
+	for cur.Next(context.Background()) {
+		var movie bson.M
+		err := cur.Decode(&movie)
+		if err != nil {
+			log.Fatal("Error decoding movie:", err)
+		}
+
+		movies = append(movies, movie)
+	}
+	defer cur.Close(context.Background())
+	return movies
+}
+
+// Actual controller - file
+
+func GetMyAllMovies(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	allmovies := getAllMovies()
+	json.NewEncoder(w).Encode(allmovies)
 }
