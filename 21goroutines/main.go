@@ -6,7 +6,11 @@ import (
 	"sync"
 )
 
-var wg sync.WaitGroup
+var signals = []string {"test"}
+
+var wg sync.WaitGroup // WaitGroup is used to wait for the program to finish the go routines
+
+var mut sync.Mutex // Mutex is used to lock the resource and unlock the resource
 
 func main() {
 	// // goroutine means a function that runs concurrently with other functions
@@ -27,6 +31,7 @@ func main() {
 	}
 	wg.Wait()
 	fmt.Println("All go routines are done")
+	fmt.Println(signals)
 }
 
 // func greeter(s string) {
@@ -43,5 +48,9 @@ func getStatusCode(endpoint string)  {
 	if err != nil {
 		fmt.Println("OOPs in endpoint")
 	}
+	mut.Lock()
+	signals = append(signals, endpoint)
+	mut.Unlock()
+	
 	fmt.Println("Status code is", res.StatusCode)
 }
