@@ -8,7 +8,7 @@ import (
 func main() {
 	fmt.Println("Welcome to time of golang")
 
-	presentTime := time.Now()
+	presentTime := time.Now();
 	fmt.Println(presentTime);
 
 	// it's format standard
